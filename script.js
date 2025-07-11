@@ -1,4 +1,14 @@
 console.log("¡Bienvenido al juego de Piedra, Papel o Tijera!");
+// Declarar las variables de puntuación de los jugadores pasadas a globales 
+let humanScore = 0;
+let computerScore = 0;
+
+//referencia al div que muestra los resultados y la puntuación
+
+const resultadosDiv = document.querySelector('#resultados');
+const humanScoreDisplay = document.querySelector('#humanScore');
+const computerScoreDisplay = document.querySelector('#computerScore');
+
 
 // Lógica para obtener la elección de la computadora
 
@@ -20,68 +30,92 @@ function getComputerChoice() {
 //Lógica para obtener la elección del jugador
 
 function getHumanChoice() {
-    const option = prompt("!Escribe tu elección: piedra, papel o tijera¡.");
 
     return option;
 }
 
-//console.log(getHumanChoice());
+function playRound(humanChoice, computerChoice) {
+    const normalizedHumanChoice = humanChoice.toLowerCase();
 
-// Lógica  para jugar todo el juego
+    // ¡IMPORTANTE! Cambia a innerHTML aquí para limpiar
+    resultadosDiv.innerHTML = '';
 
-function playGame() {
+    // ¡IMPORTANTE! Cambia a innerHTML aquí y en todas las demás líneas que usen resultadosDiv
+    resultadosDiv.innerHTML += `Tu elección: ${normalizedHumanChoice}.<br>`;
+    resultadosDiv.innerHTML += `Elección de la computadora: ${computerChoice}.<br>`; // Añadí un punto para consistencia
 
-    // Declarar las variables de puntuación de los jugadores  
-    let humanScore = 0;
-    let computerScore = 0;
+    if (normalizedHumanChoice === computerChoice) {
+        resultadosDiv.innerHTML += "¡¡¡Empate!!!<br>";
 
-    function playRound(humanChoice, computerChoice) {
-
-        const normalizedHumanChoice = humanChoice.toLowerCase();
-
-        console.log(`Tu elección: ${normalizedHumanChoice}`);
-        console.log(`Elección de la computadora: ${computerChoice}`);
-
-        if (normalizedHumanChoice === computerChoice) {
-            console.log("¡¡¡Empate!!!");
-
-        } else if (
-            (normalizedHumanChoice === "piedra" && computerChoice === "tijera") ||
-            (normalizedHumanChoice === "papel" && computerChoice === "piedra") ||
-            (normalizedHumanChoice === "tijera" && computerChoice === "papel")
-        ) {
-            console.log(`¡Ganas! ${normalizedHumanChoice} le gana a ${computerChoice}.`);
-            humanScore++; // Incrementa la puntuación del jugador
-        } else {
-            // Si no es empate y el humano no gana, entonces la computadora gana
-            console.log(`¡Pierdes! ${computerChoice} le gana a ${normalizedHumanChoice}.`);
-            computerScore++; // Incrementa la puntuación de la computadora
-        }
-    }
-    for (let i = 0; i < 5; i++) {
-        console.log(`\n--- Ronda ${i + 1} ---`); // Agregué un salto de línea para mejor legibilidad
-        let human = getHumanChoice(); // Se obtiene opción humano
-        let computer = getComputerChoice(); // Se obtiene opción computadora
-
-        playRound(human, computer); // Ejecuta la lógica de la ronda
-
-        console.log(`Marcador actual: Humano ${humanScore} - Computadora ${computerScore}`);
-        console.log(`--------------------`);
-    }
-
-    // Lógica para el ganador final
-    console.log("\n--- RESULTADO FINAL DEL JUEGO ---");
-    if (humanScore > computerScore) {
-        console.log(`¡FELICIDADES! ¡Ganaste el juego ${humanScore} a ${computerScore}!`);
-    } else if (computerScore > humanScore) {
-        console.log(`¡Qué pena! La computadora ganó el juego ${computerScore} a ${humanScore}.`);
+    } else if (
+        (normalizedHumanChoice === "piedra" && computerChoice === "tijera") ||
+        (normalizedHumanChoice === "papel" && computerChoice === "piedra") ||
+        (normalizedHumanChoice === "tijera" && computerChoice === "papel")
+    ) {
+        resultadosDiv.innerHTML += `¡Ganas! ${normalizedHumanChoice} le gana a ${computerChoice}.<br>`;
+        humanScore++; // Incrementa la puntuación del jugador
     } else {
-        console.log(`¡Es un EMPATE! El juego terminó ${humanScore} a ${computerScore}.`);
+        // Si no es empate y el humano no gana, entonces la computadora gana
+        resultadosDiv.innerHTML += `¡Pierdes! ${computerChoice} le gana a ${normalizedHumanChoice}.<br>`;
+        computerScore++; // Incrementa la puntuación de la computadora
+    }
+
+
+    humanScoreDisplay.textContent = humanScore;
+    computerScoreDisplay.textContent = computerScore;
+
+    if (humanScore === 5 || computerScore === 5) {
+        playGame();
+        btnPiedra.disabled = true;
+        btnPapel.disabled = true;
+        btnTijera.disabled = true;
     }
 }
 
-// *** ¡IMPORTANTE! Llama a la función principal para iniciar el juego ***
-playGame();
+
+// Lógica  para jugar todo el juego
+
+
+
+function playGame() {
+    // ¡IMPORTANTE! Cambia a innerHTML aquí y en todas las demás líneas de playGame
+    resultadosDiv.innerHTML = "<br>--- RESULTADO FINAL DEL JUEGO ---<br>";
+
+    if (humanScore > computerScore) {
+        resultadosDiv.innerHTML += `¡FELICIDADES! ¡Ganaste el juego ${humanScore} a ${computerScore}!<br>`;
+    } else if (computerScore > humanScore) {
+        resultadosDiv.innerHTML += `¡Qué pena! La computadora ganó el juego ${computerScore} a ${humanScore}.<br>`;
+    } else {
+        resultadosDiv.innerHTML += `¡Es un EMPATE! El juego terminó ${humanScore} a ${computerScore}!<br>`;
+    }
+}
+
+//nuevo código para dar funcionalidad a los tres botones
+
+const btnPiedra = document.querySelector('#btnPiedra');
+const btnPapel = document.querySelector('#btnPapel');
+const btnTijera = document.querySelector('#btnTijera');
+
+// añadir el evento a los botones
+
+btnPiedra.addEventListener('click', () => {
+    const humanSelection = 'piedra';
+    const computerSelection = getComputerChoice();
+    playRound(humanSelection, computerSelection);
+});
+
+btnPapel.addEventListener('click', () => {
+    const humanSelection = 'papel';
+    const computerSelection = getComputerChoice();
+    playRound(humanSelection, computerSelection);
+});
+
+btnTijera.addEventListener('click', () => {
+    const humanSelection = 'tijera';
+    const computerSelection = getComputerChoice();
+    playRound(humanSelection, computerSelection);
+});
+
 
 
 
